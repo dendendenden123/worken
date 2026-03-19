@@ -16,7 +16,7 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  console.log(req)
+  console.log(req);
   const { email, password } = req.body;
   const user = await User.findOne({ where: { email } });
 
@@ -37,11 +37,9 @@ export const login = async (req, res) => {
   res.json({ token });
 };
 
-export const logout = async(req, res) =>{
-    
-}
+export const logout = async (req, res) => {};
 
-export const profile = async (req, red) => {
+export const profile = async (req, res) => {
   const user = await User.findByPk(req.user.id);
 
   res.json(user);
