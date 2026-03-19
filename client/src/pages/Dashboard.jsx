@@ -1,53 +1,51 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"
-import axios from "axios";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { getAxiosError } from '../utils/handleAxiosError';
 
 export default function Dashboard() {
+     const [user, setUser] = useState(null);
+     const navigate = useNavigate();
 
-  const [user, setUser] = useState(null);
-  const navigate = useNavigate()
+     useEffect(() => {
+          const token = localStorage.getItem('token');
 
-  useEffect(() => {
+          if (!token) {
+               return navigate('/login');
+          }
 
-    const token = localStorage.getItem("token");
+          axios.get('http://localhost:5000/api/auth/profile', {
+               headers: {
+                    Authorization: `Bearer ${token}`,
+               },
+          }).then((res) => {
+               setUser(res.data);
+          });
+     }, []);
 
-    if(!token){
-      return navigate("/login")
-    }
+     const logout = () => {
+          localStorage.removeItem('token');
+          try {
+               axios.post('http://localhost:5000/api/auth/logout');
+               navigate('/login');
+          } catch (err) {
+               alert(getAxiosError(err));
+          }
+     };
 
-    axios.get(
-      "http://localhost:5000/api/auth/profile",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-    ).then(res => {
+     return (
+          <div>
+               <h2>Dashboard</h2>
 
-      setUser(res.data);
-
-    });
-
-  }, []);
-
-  const logout = ()=>{
-    localStorage.removeItem("token")
-    navigate("/login")
-  }
-
-  return (
-
-    <div>
-
-      <h2>Dashboard</h2>
-
-      {user && (<>
-        <p>Welcome {user.name}</p>
-        <> <button onClick={()=> logout()}> Log Out</button></>
-       </>
-      )}
-
-    </div>
-
-  );
+               {user && (
+                    <>
+                         <p>Welcome {user.name}</p>
+                         <>
+                              {' '}
+                              <button onClick={() => logout()}> Log Out</button>
+                         </>
+                    </>
+               )}
+          </div>
+     );
 }

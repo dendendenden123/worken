@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { getAxiosError } from '../utils/handleAxiosError';
 
 export default function Register() {
      const navigate = useNavigate();
@@ -12,9 +13,15 @@ export default function Register() {
      });
 
      const submit = async () => {
-          await axios.post('http://localhost:5000/api/auth/register', form);
-
-          alert('Registered!');
+          try {
+               await axios.post(
+                    'http://localhost:5000/api/auth/register',
+                    form
+               );
+               alert('Registered!');
+          } catch (err) {
+               alert(getAxiosError(err));
+          }
      };
 
      return (

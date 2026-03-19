@@ -16,7 +16,6 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  console.log(req);
   const { email, password } = req.body;
   const user = await User.findOne({ where: { email } });
 
@@ -30,7 +29,7 @@ export const login = async (req, res) => {
     return res.status(401).json({ message: "Wrong password" });
   }
 
-  const token = jwt.sign({ id: user.id, email: user.email }, "secretkey", {
+  const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, {
     expiresIn: "1d",
   });
 
